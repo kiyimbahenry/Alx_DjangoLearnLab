@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Librarian Dashboard</title>
+</head>
+<body>
+    <h1>Librarian Dashboard</h1>
+    <p>Welcome, {{ user.username }}! You have Librarian privileges.</p>
+    <p>As a Librarian, you can:</p>
+    <ul>
+        <li>Manage book inventory</li>
+        <li>Handle member registrations</li>
+        <li>Monitor library activities</li>
+    </ul>
+    <a href="{% url 'relationship_app:list_books' %}">Back to Books</a> |
+    <a href="{% url 'relationship_app:logout' %}">Logout</a>
+</body>
+</html>
