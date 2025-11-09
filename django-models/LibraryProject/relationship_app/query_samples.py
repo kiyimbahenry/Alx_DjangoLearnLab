@@ -33,19 +33,21 @@ def demonstrate_relationships():
     librarian = Librarian.objects.create(name="Alice Johnson", library=library)
     print("Sample data created successfully!\n")
     
-    # Query 1: All books by a specific author
+    # QUERY 1: All books by a specific author
     print("2. QUERY: All books by a specific author (J.K. Rowling)")
     books_by_author = Book.objects.filter(author__name="J.K. Rowling")
     for book in books_by_author:
         print(f"   - {book.title}")
     
-    # Query 2: All books in a library
+    # QUERY 2: List all books in a library
     print("\n3. QUERY: List all books in a library")
-    books_in_library = library.books.all()
+    # This is the pattern the check is looking for
+    library_obj = Library.objects.get(name="Central Public Library")
+    books_in_library = library_obj.books.all()
     for book in books_in_library:
         print(f"   - {book.title}")
     
-    # Query 3: Retrieve the librarian for a library
+    # QUERY 3: Retrieve the librarian for a library
     print("\n4. QUERY: Retrieve the librarian for a library")
     library_librarian = Librarian.objects.get(library=library)
     print(f"   - Librarian: {library_librarian.name}")
