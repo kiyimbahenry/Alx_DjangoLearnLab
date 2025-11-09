@@ -111,6 +111,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Add to settings.py
+LOGIN_REDIRECT_URL = '/relationship/books/'
+LOGOUT_REDIRECT_URL = '/relationship/login/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
