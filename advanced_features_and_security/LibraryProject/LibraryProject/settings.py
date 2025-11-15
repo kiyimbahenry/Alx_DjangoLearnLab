@@ -9,7 +9,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
-SECRET_KEY = 'django-insecure-your-secret-key-here'  # Change this in production!
+SECRET_KEY = 'django-insecure-your-secret-key-here'
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -23,8 +23,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Your custom apps
-    'relationship_app',
     'bookshelf',
+    'relationship_app',
 ]
 
 MIDDLEWARE = [
@@ -95,8 +95,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ========== CUSTOM CONFIGURATIONS ==========
 
-# Custom user model (FIXED THE TYPO)
-AUTH_USER_MODEL = 'relationship_app.CustomUser'  # ← Fixed from AUTIL to AUTH
+# Custom user model
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 # Media files configuration
 MEDIA_URL = '/media/'
