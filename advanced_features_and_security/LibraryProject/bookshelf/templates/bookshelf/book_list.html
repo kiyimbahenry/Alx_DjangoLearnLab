@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book List - Secure Library</title>
+    <!-- Security: CSP compliant styles and scripts -->
+    <style>
+        /* Inline styles are allowed by our CSP policy */
+        body { font-family: Arial, sans-serif; }
+        .book-item { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Book List</h1>
+    
+    <!-- Search Form with CSRF Protection -->
+    <form method="get" action="{% url 'book_search' %}">
+        {% csrf_token %}  <!-- CSRF token for GET forms that modify state -->
+        <input type="text" name="q" placeholder="Search books..." 
+               value="{{ request.GET.q }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <div class="book-list">
+        {% for book in books %}
+        <div class="book-item">
+            <h3>{{ book.title|escape }}</h3>  <!-- Escape to prevent XSS -->
+            <p>Author: {{ book.author|escape }}</p>
+            <p>ISBN: {{ book.isbn|escape }}</p>
+        </div>
+        {% empty %}
+        <p>No books available.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Security: Only load scripts from trusted sources -->
+    <script>
+        // Safe JavaScript - no inline event handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Book list loaded securely');
+        });
+    </script>
+</body>
+</html>

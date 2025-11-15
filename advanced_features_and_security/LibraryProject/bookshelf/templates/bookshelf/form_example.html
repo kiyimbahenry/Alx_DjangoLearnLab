@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Book - Secure Form</title>
+</head>
+<body>
+    <h1>Add New Book</h1>
+    
+    <!-- Form with CSRF Protection -->
+    <form method="post" action="{% url 'add_book' %}">
+        {% csrf_token %}  <!-- Essential for CSRF protection -->
+        
+        <!-- Security: Django forms automatically escape user input -->
+        {{ form.as_p }}
+        
+        <button type="submit">Add Book</button>
+    </form>
+
+    <!-- Security: Form validation happens server-side -->
+    {% if form.errors %}
+    <div class="errors">
+        <p>Please correct the following errors:</p>
+        <ul>
+        {% for field in form %}
+            {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error|escape }}</li>  <!-- Escape error messages -->
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <li>{{ error|escape }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</body>
+</html>
