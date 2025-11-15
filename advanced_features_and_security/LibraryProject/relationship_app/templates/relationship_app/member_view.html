@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Dashboard</title>
+</head>
+<body>
+    <h1>Member Dashboard</h1>
+    <p>Welcome, {{ user.username }}! You have Member privileges.</p>
+    <p>As a Member, you can:</p>
+    <ul>
+        <li>Browse and borrow books</li>
+        <li>View your borrowing history</li>
+        <li>Request new books</li>
+    </ul>
+    <a href="{% url 'relationship_app:list_books' %}">Back to Books</a> |
+    <a href="{% url 'relationship_app:logout' %}">Logout</a>
+</body>
+</html>
