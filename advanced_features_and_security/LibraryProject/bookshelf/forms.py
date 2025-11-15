@@ -1,68 +1,84 @@
 from django import forms
-from .models import Book
+from django.core.validators import MinLengthValidator, RegexValidator
 import html
 
-class BookForm(forms.ModelForm):
+class ExampleForm(forms.Form):
     """
-    Secure form with additional validation and input sanitization.
+    Example form for demonstration with security validation.
+    This form can be used for general purpose form examples.
     """
-    class Meta:
-        model = Book
-        fields = ['title', 'author', 'isbn', 'description', 'published_date']
-        widgets = {
-            'description': forms.Textarea(attrs={
-                'rows': 4,
-                'maxlength': '2000'  # Client-side length validation
-            }),
-            'published_date': forms.DateInput(attrs={'type': 'date'})
-        }
     
-    def clean_title(self):
-        """
-        Sanitize and validate title field.
-        """
-        title = self.cleaned_data.get('title', '').strip()
+    # Name field with security validation
+    name = forms.CharField(
+        max_length=100,
+        validators=[
+            MinLengthValidator(2, message="Name must be at least 2 characters long.")
+        ],
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your name'
+        }),
+        help_text="Enter your full name (2-100 characters)."
+    )
+    
+    # Email field with validation
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your email'
+        }),
+        help_text="Enter a valid email address."
+    )
+    
+    # Message field with security measures
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 4,
+            'placeholder': 'Enter your message',
+            'maxlength': '500'
+        }),
+        validators=[MinLengthValidator(10)],
+        help_text="Enter your message (minimum 10 characters, maximum 500)."
+    )
+    
+    # Secure choice field
+    category = forms.ChoiceField(
+        choices=[
+            ('general', 'General Inquiry'),
+            ('technical', 'Technical Support'),
+            ('feedback', 'Feedback'),
+        ],
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        help_text="Select the category of your message."
+    )
+    
+    def clean_name(self):
+        """Secure name validation"""
+        name = self.cleaned_data.get('name', '').strip()
         
-        if not title:
-            raise forms.ValidationError("Title is required.")
+        if not name:
+            raise forms.ValidationError("Name is required.")
         
-        # Prevent potential XSS by escaping HTML characters
-        title = html.escape(title)
+        # Sanitize input - remove potential XSS vectors
+        name = html.escape(name)
         
-        # Additional security: Check for suspicious patterns
+        # Check for suspicious patterns
         suspicious_patterns = ['<script', 'javascript:', 'onload=', 'onerror=']
         for pattern in suspicious_patterns:
-            if pattern in title.lower():
+            if pattern in name.lower():
                 raise forms.ValidationError("Invalid input detected.")
         
-        return title
+        return name
     
-    def clean_author(self):
-        """
-        Sanitize and validate author field.
-        """
-        author = self.cleaned_data.get('author', '').strip()
+    def clean_message(self):
+        """Secure message validation"""
+        message = self.cleaned_data.get('message', '').strip()
         
-        if len(author) < 2:
-            raise forms.ValidationError("Author name must be at least 2 characters long.")
+        if len(message) < 10:
+            raise forms.ValidationError("Message must be at least 10 characters long.")
         
-        # Escape HTML characters to prevent XSS
-        author = html.escape(author)
+        # Basic HTML escaping for security
+        message = html.escape(message)
         
-        return author
-    
-    def clean_description(self):
-        """
-        Sanitize description field while allowing safe formatting.
-        """
-        description = self.cleaned_data.get('description', '').strip()
-        
-        if description:
-            # Basic HTML escaping for security
-            description = html.escape(description)
-            
-            # Limit length to prevent abuse
-            if len(description) > 2000:
-                raise forms.ValidationError("Description is too long.")
-        
-        return description
+        return message

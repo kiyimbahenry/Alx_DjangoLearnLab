@@ -15,7 +15,7 @@ from rest_framework.response import Response
 import logging
 
 from .models import Book, CustomUser
-from .forms import BookForm
+from .forms import BookForm, ExampleForm
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +49,38 @@ class BookDetailView(LoginRequiredMixin, DetailView):
         """Secure object retrieval"""
         obj = get_object_or_404(Book, pk=self.kwargs.get('pk'))
         return obj
+
+# Example form view for demonstration
+@csrf_protect
+@login_required
+def example_form_view(request):
+    """
+    Example view demonstrating secure form handling with CSRF protection.
+    """
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the secure form data
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            category = form.cleaned_data['category']
+            
+            # Log the form submission for security auditing
+            logger.info(f"Example form submitted by {name} ({email}) - Category: {category}")
+            
+            # In a real application, you might save to database or send email
+            messages.success(request, 'Form submitted successfully!')
+            return redirect('bookshelf:book_list')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = ExampleForm()
+
+    return render(request, 'bookshelf/form_example.html', {
+        'form': form,
+        'title': 'Example Form'
+    })
 
 # View to add new book (requires can_create permission)
 @csrf_protect
