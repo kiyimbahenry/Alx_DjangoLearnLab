@@ -31,3 +31,28 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=100)
+    isbn = models.CharField(max_length=13, unique=True, blank=True, null=True)
+    published_date = models.DateField(null=True, blank=True)
+    description = models.TextField(blank=True)
+    created_by = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE, 
+        related_name='books'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        permissions = [
+            ("can_view", "Can view books"),
+            ("can_create", "Can create books"),
+            ("can_edit", "Can edit books"),
+            ("can_delete", "Can delete books"),
+        ]
+    
+    def __str__(self):
+        return self.title
