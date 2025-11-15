@@ -6,6 +6,23 @@ from django.contrib.auth.decorators import permission_required, login_required
 from django.urls import reverse
 from .models import Book, CustomUser
 from .forms import BookForm
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+
+@permission_classes([IsAuthenticated])
+def your_view(request):
+    # Your view logic
+    pass
+
+# Or in class-based views:
+from rest_framework.views import APIView
+
+class YourView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        # With raise_exception=True
+        self.check_permissions(request)  # This uses raise_exception internally
 
 # View to list all books (accessible to all logged-in users)
 @login_required

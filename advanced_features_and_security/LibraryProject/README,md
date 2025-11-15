@@ -1,0 +1,17 @@
+# Bookshelf App
+
+A Django app for managing books in the library system.
+
+## Features
+- Book management
+- Author information
+- Category organization
+
+## Installation
+1. Add 'bookshelf' to INSTALLED_APPS
+2. Run migrations: `python manage.py migrate`
+3. Create superuser: `python manage.py createsuperuser`
+
+## API Endpoints
+- `/books/` - List all books
+- `/books/<id>/` - Get specific book details
