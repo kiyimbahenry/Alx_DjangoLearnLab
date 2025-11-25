@@ -30,8 +30,6 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-# Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,11 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # Add these TWO lines (not one combined line):
+    # Add these two lines:
     'rest_framework',    # Django REST Framework
-    'api',               # Your custom api app
-]
+    'api',    # Your custom api app
+]  # FIXED: Removed extra brackets
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
