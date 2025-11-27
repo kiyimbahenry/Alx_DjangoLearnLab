@@ -5,12 +5,11 @@ This module implements generic views for CRUD operations on Book model
 with advanced query capabilities including filtering, searching, and ordering.
 """
 
-from rest_framework import generics, status
+from rest_framework import generics, status, filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from django_filters import rest_framework
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Book, Author
 from .serializers import BookSerializer, AuthorSerializer
 from .filters import BookFilter
@@ -32,15 +31,15 @@ class BookListView(generics.ListAPIView):
     
     # Filter backends configuration
     filter_backends = [
-        DjangoFilterBackend,  # For filtering capabilities
-        SearchFilter,         # For search functionality  
-        OrderingFilter        # For ordering capabilities
+        DjangoFilterBackend,       # For filtering capabilities
+        filters.SearchFilter,      # For search functionality  
+        filters.OrderingFilter     # For ordering capabilities
     ]
     
     # Filter configuration
     filterset_class = BookFilter
     
-    # Search configuration - enable search on title and author fields
+    # Search configuration - enable search functionality on title and author fields
     search_fields = ['title', 'author__name']
     
     # Ordering configuration - setup ordering filter
@@ -88,7 +87,7 @@ class AuthorListView(generics.ListAPIView):
     permission_classes = [AllowAny]
     
     # Add search and ordering for authors as well
-    filter_backends = [SearchFilter, OrderingFilter]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name']
     ordering_fields = ['name', 'id']
     ordering = ['name']
@@ -112,8 +111,8 @@ class APIHealthCheck(generics.GenericAPIView):
             'status': 'healthy',
             'message': 'API is working correctly',
             'features': {
-                'filtering': 'Available on /api/books/',
-                'searching': 'Available on /api/books/',
-                'ordering': 'Available on /api/books/',
+                'filtering': 'Available on /api/books/ with DjangoFilterBackend',
+                'searching': 'Available on /api/books/ with SearchFilter',
+                'ordering': 'Available on /api/books/ with OrderingFilter',
             }
         }, status=status.HTTP_200_OK)
