@@ -1,62 +1,107 @@
 """
-Custom serializers for the API application.
-
-This module defines serializers for converting model instances to JSON
-and handling nested relationships with custom validation.
+Enhanced serializers with additional validation and customization.
 """
 
 from rest_framework import serializers
-from django.core.exceptions import ValidationError
 from datetime import datetime
 from .models import Author, Book
 
 class BookSerializer(serializers.ModelSerializer):
     """
-    Serializer for the Book model with custom validation.
+    Enhanced Book serializer with comprehensive validation.
     
-    Handles serialization/deserialization of Book instances and includes
-    custom validation for the publication_year field to ensure it's not in the future.
+    Includes custom validation for publication year and author existence.
     """
+    
+    # Add read-only field to display author name for better API response
+    author_name = serializers.CharField(source='author.name', read_only=True)
     
     class Meta:
         model = Book
-        fields = ['id', 'title', 'publication_year', 'author']
-        read_only_fields = ['id']  # ID is auto-generated and read-only
+        fields = ['id', 'title', 'publication_year', 'author', 'author_name']
+        read_only_fields = ['id', 'author_name']
     
     def validate_publication_year(self, value):
         """
-        Validate that the publication year is not in the future.
+        Validate that publication year is not in the future.
         
         Args:
             value (int): The publication year to validate
             
         Returns:
-            int: The validated publication year
+            int: Validated publication year
             
         Raises:
-            serializers.ValidationError: If the publication year is in the future
+            serializers.ValidationError: If year is in future
         """
         current_year = datetime.now().year
         if value > current_year:
             raise serializers.ValidationError(
                 f"Publication year cannot be in the future. Current year is {current_year}."
             )
+        if value < 1000:  # Reasonable minimum year check
+            raise serializers.ValidationError(
+                "Publication year seems unrealistic."
+            )
         return value
+    
+    def validate_title(self, value):
+        """
+        Validate book title.
+        
+        Args:
+            value (str): The book title to validate
+            
+        Returns:
+            str: Validated and cleaned title
+        """
+        # Strip whitespace and ensure title is not empty
+        cleaned_title = value.strip()
+        if not cleaned_title:
+            raise serializers.ValidationError("Book title cannot be empty.")
+        return cleaned_title
 
 class AuthorSerializer(serializers.ModelSerializer):
     """
-    Serializer for the Author model with nested book relationships.
+    Enhanced Author serializer with nested book relationships.
     
-    Includes a nested representation of related books using BookSerializer.
-    The books field is read-only and dynamically includes all related books.
+    Includes nested book details and book count for better API responses.
     """
     
-    # Nested serializer for related books
-    # Using BookSerializer to include full book details in author responses
-    # read_only=True because we're using this for serialization (output) not deserialization (input)
+    # Nested serializer for related books (read-only for display)
     books = BookSerializer(many=True, read_only=True)
+    
+    # Computed field to show book count
+    book_count = serializers.SerializerMethodField()
     
     class Meta:
         model = Author
-        fields = ['id', 'name', 'books']  # Includes author ID, name, and nested books
-        read_only_fields = ['id', 'books']  # ID and books are read-only
+        fields = ['id', 'name', 'books', 'book_count']
+        read_only_fields = ['id', 'books', 'book_count']
+    
+    def get_book_count(self, obj):
+        """
+        Get the count of books by this author.
+        
+        Args:
+            obj (Author): The author instance
+            
+        Returns:
+            int: Number of books by this author
+        """
+        return obj.books.count()
+    
+    def validate_name(self, value):
+        """
+        Validate author name.
+        
+        Args:
+            value (str): The author name to validate
+            
+        Returns:
+            str: Validated and cleaned name
+        """
+        cleaned_name = value.strip()
+        if not cleaned_name:
+            raise serializers.ValidationError("Author name cannot be empty.")
+        return cleaned_name
