@@ -79,3 +79,36 @@ class APIHealthCheck(generics.GenericAPIView):
             'status': 'healthy',
             'message': 'API is working correctly'
         }, status=status.HTTP_200_OK)
+
+# Add these views if you're using the alternative URL patterns without primary keys
+class BookUpdateViewGeneric(generics.UpdateAPIView):
+    """
+    Update an existing book - Requires authentication.
+    This version works with URLs that don't include primary key in the path.
+    """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_object(self):
+        # Get book ID from request data instead of URL
+        book_id = self.request.data.get('id')
+        if book_id:
+            return Book.objects.get(id=book_id)
+        return None
+
+class BookDeleteViewGeneric(generics.DestroyAPIView):
+    """
+    Delete a book - Requires authentication.
+    This version works with URLs that don't include primary key in the path.
+    """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_object(self):
+        # Get book ID from request data instead of URL
+        book_id = self.request.data.get('id')
+        if book_id:
+            return Book.objects.get(id=book_id)
+        return None
