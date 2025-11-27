@@ -7,16 +7,18 @@ with custom permissions and behavior customization.
 
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from .models import Book, Author
 from .serializers import BookSerializer, AuthorSerializer
 
+# Rest of your views code remains the same...
 class BookListView(generics.ListAPIView):
     """
     List all books - Read only access for all users.
     """
     queryset = Book.objects.all().select_related('author')
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]  # Use explicit import
 
 class BookDetailView(generics.RetrieveAPIView):
     """
@@ -24,7 +26,7 @@ class BookDetailView(generics.RetrieveAPIView):
     """
     queryset = Book.objects.all().select_related('author')
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]  # Use explicit import
 
 class BookCreateView(generics.CreateAPIView):
     """
@@ -32,7 +34,7 @@ class BookCreateView(generics.CreateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Use explicit import
 
 class BookUpdateView(generics.UpdateAPIView):
     """
@@ -40,7 +42,7 @@ class BookUpdateView(generics.UpdateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Use explicit import
 
 class BookDeleteView(generics.DestroyAPIView):
     """
@@ -48,7 +50,7 @@ class BookDeleteView(generics.DestroyAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Use explicit import
 
 # Author Views
 class AuthorListView(generics.ListAPIView):
@@ -57,7 +59,7 @@ class AuthorListView(generics.ListAPIView):
     """
     queryset = Author.objects.all().prefetch_related('books')
     serializer_class = AuthorSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]  # Use explicit import
 
 class AuthorDetailView(generics.RetrieveAPIView):
     """
@@ -65,50 +67,17 @@ class AuthorDetailView(generics.RetrieveAPIView):
     """
     queryset = Author.objects.all().prefetch_related('books')
     serializer_class = AuthorSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]  # Use explicit import
 
 # Health check view
 class APIHealthCheck(generics.GenericAPIView):
     """
     Simple health check endpoint to verify API is working.
     """
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]  # Use explicit import
     
     def get(self, request):
         return Response({
             'status': 'healthy',
             'message': 'API is working correctly'
         }, status=status.HTTP_200_OK)
-
-# Add these views if you're using the alternative URL patterns without primary keys
-class BookUpdateViewGeneric(generics.UpdateAPIView):
-    """
-    Update an existing book - Requires authentication.
-    This version works with URLs that don't include primary key in the path.
-    """
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_object(self):
-        # Get book ID from request data instead of URL
-        book_id = self.request.data.get('id')
-        if book_id:
-            return Book.objects.get(id=book_id)
-        return None
-
-class BookDeleteViewGeneric(generics.DestroyAPIView):
-    """
-    Delete a book - Requires authentication.
-    This version works with URLs that don't include primary key in the path.
-    """
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_object(self):
-        # Get book ID from request data instead of URL
-        book_id = self.request.data.get('id')
-        if book_id:
-            return Book.objects.get(id=book_id)
-        return None
