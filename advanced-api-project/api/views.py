@@ -17,19 +17,12 @@ from .filters import BookFilter
 class BookListView(generics.ListAPIView):
     """
     List all books with advanced filtering, searching, and ordering capabilities.
-    
-    Implements Django REST Framework's filtering capabilities to allow users 
-    to filter the book list by various attributes like title, author, and publication_year.
-    
-    Search functionality is enabled on fields of the Book model: title and author.
-    
-    Ordering is configured to allow users to order results by any field.
     """
     queryset = Book.objects.all().select_related('author')
     serializer_class = BookSerializer
     permission_classes = [AllowAny]
     
-    # Filter backends configuration
+    # Configure filter backends for advanced query capabilities
     filter_backends = [
         DjangoFilterBackend,       # For filtering capabilities
         filters.SearchFilter,      # For search functionality  
@@ -39,7 +32,7 @@ class BookListView(generics.ListAPIView):
     # Filter configuration
     filterset_class = BookFilter
     
-    # Search configuration - enable search functionality on title and author fields
+    # Search configuration - enable search on title and author fields
     search_fields = ['title', 'author__name']
     
     # Ordering configuration - setup ordering filter
