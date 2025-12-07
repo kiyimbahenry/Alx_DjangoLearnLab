@@ -25,6 +25,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',  # Added blog app - FIX FOR ERROR #1 & #2
+ 'crispy_forms',
+    'crispy_bootstrap5',
+    ...
+]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'blog-home'
+LOGOUT_REDIRECT_URL = 'blog-home'
 ]
 
 MIDDLEWARE = [

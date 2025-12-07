@@ -1,0 +1,22 @@
+<!-- blog/templates/blog/post_detail.html -->
+{% extends "blog/base.html" %}
+
+{% block content %}
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">{{ object.author }}</a>
+                <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+                {% if user == object.author %}
+                    <div class="mt-2">
+                        <a href="{% url 'post-update' object.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <a href="{% url 'post-delete' object.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </div>
+                {% endif %}
+            </div>
+            <h2 class="article-title">{{ object.title }}</h2>
+            <p class="article-content">{{ object.content }}</p>
+        </div>
+    </article>
+    <a href="{% url 'blog-home' %}" class="btn btn-outline-secondary">Back to Posts</a>
+{% endblock content %}
