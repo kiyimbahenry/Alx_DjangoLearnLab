@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Blog</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-blog"></i> Django Blog</h1>
+            <p>A comprehensive blogging platform built with Django</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="main-content">
+            <div class="posts-container">
+                <h2>Recent Posts</h2>
+                {% if posts %}
+                    {% for post in posts %}
+                    <article class="post">
+                        <h3 class="post-title">{{ post.title }}</h3>
+                        <div class="post-meta">
+                            <span><i class="fas fa-user"></i> {{ post.author }}</span>
+                            <span><i class="fas fa-calendar"></i> {{ post.published_date|date:"F d, Y" }}</span>
+                        </div>
+                        <div class="post-content">
+                            {{ post.content|truncatewords:50 }}
+                        </div>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-posts">
+                        <i class="fas fa-newspaper fa-3x"></i>
+                        <h3>No posts yet</h3>
+                        <p>Be the first to create a blog post!</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-info-circle"></i> About This Blog</h3>
+                    <p>Welcome to our Django-powered blog platform. Here you can find interesting articles about web development, Django, and more.</p>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-fire"></i> Popular Tags</h3>
+                    <div class="tags">
+                        <span class="tag">Django</span>
+                        <span class="tag">Python</span>
+                        <span class="tag">Web Development</span>
+                        <span class="tag">Blogging</span>
+                        <span class="tag">Tutorial</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-users"></i> Recent Authors</h3>
+                    <ul class="authors-list">
+                        <li><i class="fas fa-user-circle"></i> Admin User</li>
+                        <li><i class="fas fa-user-circle"></i> Guest Writer</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Django Blog. All rights reserved.</p>
+            <p class="footer-links">
+                <a href="#"><i class="fab fa-github"></i> GitHub</a>
+                <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

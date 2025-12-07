@@ -1,0 +1,99 @@
+/* Main CSS for Blog */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.posts-container {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.post {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.post:last-child {
+    border-bottom: none;
+}
+
+.post-title {
+    color: #2d3748;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.post-meta {
+    color: #718096;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.post-content {
+    color: #4a5568;
+    line-height: 1.7;
+}
+
+.sidebar {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+footer {
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 2rem;
+    background: #2d3748;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+}
