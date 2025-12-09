@@ -1,0 +1,36 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2>{% if object %}Edit Comment{% else %}Add Comment{% endif %}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ form.content.label_tag }}
+                            {{ form.content }}
+                            {% if form.content.errors %}
+                            <div class="alert alert-danger mt-2">
+                                {{ form.content.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                {% if object %}Update{% else %}Post{% endif %} Comment
+                            </button>
+                            <a href="{% if object %}{% url 'post-detail' object.post.pk %}{% else %}{% url 'blog-home' %}{% endif %}" 
+                               class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
