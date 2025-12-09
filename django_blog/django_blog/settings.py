@@ -24,8 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # Local apps
+    'taggit',
     'blog',  # Make sure 'blog' is exactly the name of your app
 ]
 

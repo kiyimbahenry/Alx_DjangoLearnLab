@@ -1,0 +1,56 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Tags - Django Blog{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h2>All Tags</h2>
+            <p class="text-muted mb-4">
+                Browse posts by tags
+            </p>
+            
+            <div class="tag-cloud">
+                {% if tags %}
+                    {% for tag in tags %}
+                    <a href="{% url 'posts-by-tag' tag.name %}" 
+                       class="badge bg-primary text-decoration-none me-2 mb-2" 
+                       style="font-size: {% widthratio tag.taggit_taggeditem_items.count 1 0.8|add:1 %}em;">
+                        {{ tag.name }} ({{ tag.taggit_taggeditem_items.count }})
+                    </a>
+                    {% endfor %}
+                {% else %}
+                <div class="alert alert-info">
+                    No tags available yet.
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="mt-4">
+                <a href="{% url 'blog-home' %}" class="btn btn-outline-primary">
+                    Back to Home
+                </a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'post-create' %}" class="btn btn-primary">
+                    Create New Post with Tags
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.tag-cloud a {
+    padding: 8px 12px;
+    margin: 4px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+.tag-cloud a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

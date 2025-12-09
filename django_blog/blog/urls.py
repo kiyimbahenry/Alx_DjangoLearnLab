@@ -3,7 +3,8 @@ from . import views
 from .views import (
     PostListView, PostDetailView, PostCreateView,
     PostUpdateView, PostDeleteView, CommentCreateView,
-    CommentUpdateView, CommentDeleteView
+    CommentUpdateView, CommentDeleteView, TagPostListView,
+    SearchResultsView
 )
 
 urlpatterns = [
@@ -14,10 +15,18 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     
-    # Comment URLs (using the recommended pattern)
+    # Comment URLs
     path('post/<int:pk>/comment/new/', CommentCreateView.as_view(), name='comment-create'),
     path('comment/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'),
     path('comment/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
+    
+    # Tagging URLs
+    path('tags/<str:tag_name>/', TagPostListView.as_view(), name='posts-by-tag'),
+    path('tags/', views.tag_cloud, name='tag-cloud'),
+    
+    # Search URLs
+    path('search/', SearchResultsView.as_view(), name='search-results'),
+    path('search/posts/', views.search_posts, name='search-posts'),  # Alternative
     
     # Alternative function-based view for adding comments
     path('post/<int:pk>/add_comment/', views.add_comment, name='add-comment'),

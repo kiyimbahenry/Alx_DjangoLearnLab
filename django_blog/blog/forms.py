@@ -1,5 +1,32 @@
 from django import forms
-from .models import Comment, Post
+from .models import Post, Comment
+from taggit.forms import TagField, TagWidget  # Import for tags
+
+
+class PostForm(forms.ModelForm):
+    tags = TagField(
+        required=False,
+        widget=TagWidget(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter tags separated by commas'
+        }),
+        help_text="Enter tags separated by commas"
+    )
+    
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'tags']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter post title'
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 10,
+                'placeholder': 'Write your post content here...'
+            }),
+        }
 
 
 class CommentForm(forms.ModelForm):
@@ -19,9 +46,3 @@ class CommentForm(forms.ModelForm):
         if not content or content.strip() == '':
             raise forms.ValidationError('Comment content cannot be empty.')
         return content
-
-
-class PostForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ['title', 'content']

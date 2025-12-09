@@ -4,11 +4,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib import messages
 from django.urls import reverse_lazy
+from django.db.models import Q
 from .models import Post, Comment
 from .forms import CommentForm, PostForm
+from taggit.models import Tag
 
 
-# Post Views
 class PostListView(ListView):
     model = Post
     template_name = 'blog/home.html'
@@ -62,7 +63,6 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == post.author
 
 
-# Comment Views
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
@@ -112,7 +112,71 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
 
 
-# Function-based views for comments (alternative)
+# New Views for Tagging and Search
+class TagPostListView(ListView):
+    model = Post
+    template_name = 'blog/tag_posts.html'
+    context_object_name = 'posts'
+    paginate_by = 5
+    
+    def get_queryset(self):
+        tag_name = self.kwargs.get('tag_name')
+        tag = get_object_or_404(Tag, name=tag_name)
+        return Post.objects.filter(tags=tag).order_by('-date_posted')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tag'] = self.kwargs.get('tag_name')
+        return context
+
+
+class SearchResultsView(ListView):
+    model = Post
+    template_name = 'blog/search_results.html'
+    context_object_name = 'posts'
+    paginate_by = 5
+    
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            # Search in title, content, and tags
+            return Post.objects.filter(
+                Q(title__icontains=query) |
+                Q(content__icontains=query) |
+                Q(tags__name__icontains=query)
+            ).distinct().order_by('-date_posted')
+        return Post.objects.none()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q')
+        return context
+
+
+# Function-based search view (alternative)
+def search_posts(request):
+    query = request.GET.get('q')
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct().order_by('-date_posted')
+    else:
+        posts = Post.objects.none()
+    
+    return render(request, 'blog/search_results.html', {
+        'posts': posts,
+        'query': query
+    })
+
+
+# View for all tags
+def tag_cloud(request):
+    tags = Tag.objects.all().order_by('name')
+    return render(request, 'blog/tag_cloud.html', {'tags': tags})
+
+
 @login_required
 def add_comment(request, pk):
     post = get_object_or_404(Post, pk=pk)
