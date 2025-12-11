@@ -35,6 +35,7 @@ class CommentSerializer(serializers.ModelSerializer):
         return []
     
     def validate_content(self, value):
+        # Basic validation - we removed MinLengthValidator from model
         if len(value.strip()) < 3:
             raise serializers.ValidationError("Comment must be at least 3 characters long")
         return value
@@ -79,11 +80,13 @@ class PostSerializer(serializers.ModelSerializer):
         return False
     
     def validate_title(self, value):
+        # Basic validation - we removed MinLengthValidator from model
         if len(value.strip()) < 5:
             raise serializers.ValidationError("Title must be at least 5 characters long")
         return value
     
     def validate_content(self, value):
+        # Basic validation - we removed MinLengthValidator from model
         if len(value.strip()) < 20:
             raise serializers.ValidationError("Content must be at least 20 characters long")
         return value
@@ -104,6 +107,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
         fields = ['title', 'content', 'image']
     
     def validate(self, data):
+        # Basic validation - moved from model to serializer
         if len(data.get('title', '').strip()) < 5:
             raise serializers.ValidationError({
                 'title': 'Title must be at least 5 characters long'

@@ -16,9 +16,7 @@ class Post(models.Model):
         max_length=200,
         validators=[MinLengthValidator(5, "Title must be at least 5 characters long")]
     )
-    content = models.TextField(
-        validators=[MinLengthValidator(20, "Content must be at least 20 characters long")]
-    )
+    content = models.TextField()  # Changed to plain TextField without arguments
     image = models.ImageField(
         upload_to='posts/images/',
         blank=True,
@@ -68,10 +66,7 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
         related_name='comments'
     )
-    content = models.TextField(
-        max_length=1000,
-        validators=[MinLengthValidator(3, "Comment must be at least 3 characters long")]
-    )
+    content = models.TextField()  # Changed to plain TextField without arguments
     likes = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='liked_comments',
