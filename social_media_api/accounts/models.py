@@ -27,3 +27,32 @@ class User(AbstractUser):
     @property
     def following_count(self):
         return self.following.count()
+
+    def follow(self, user):
+        """Follow another user"""
+        if user != self:
+            self.following.add(user)
+            return True
+        return False
+
+    def unfollow(self, user):
+        """Unfollow another user"""
+        if user != self:
+            self.following.remove(user)
+            return True
+        return False
+
+    def is_following(self, user):
+        """Check if following a user"""
+        return self.following.filter(id=user.id).exists()
+
+    def is_followed_by(self, user):
+        """Check if followed by a user"""
+        return self.followers.filter(id=user.id).exists()
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['username']),
+            models.Index(fields=['-created_at']),
+        ]

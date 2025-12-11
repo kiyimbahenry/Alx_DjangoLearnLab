@@ -1,24 +1,24 @@
-from django.urls import path
-from rest_framework.authtoken.views import obtain_auth_token
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
 
+router = DefaultRouter()
+router.register(r'users', views.UserViewSet, basename='user')
+
 urlpatterns = [
-    # Registration endpoint - returns token
+    # User authentication
     path('register/', views.RegisterView.as_view(), name='register'),
-    
-    # Login endpoint - returns token
     path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
     
-    # Obtain auth token (DRF built-in view)
-    path('token/', obtain_auth_token, name='api_token_auth'),
-    
-    # User profile management
+    # User profile
     path('profile/', views.UserProfileView.as_view(), name='profile'),
     
-    # Get current user
-    path('me/', views.UserProfileView.as_view(), name='current_user'),
+    # Follow management (alternative endpoints)
+    path('follow/<int:user_id>/', views.FollowUserView.as_view(), name='follow-user'),
+    path('users/<int:user_id>/followers/', views.UserFollowersView.as_view(), name='user-followers'),
+    path('users/<int:user_id>/following/', views.UserFollowingView.as_view(), name='user-following'),
     
-    # Optional: User list and detail views
-    path('users/', views.UserListView.as_view(), name='user_list'),
-    path('users/<int:pk>/', views.UserDetailView.as_view(), name='user_detail'),
+    # Include router URLs (users endpoints with follow/unfollow actions)
+    path('', include(router.urls)),
 ]

@@ -1,37 +1,51 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
-from rest_framework.authtoken.models import Token  # Added import
+from rest_framework.authtoken.models import Token
 from django.db import transaction
 
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
+    """Serializer for User model"""
     password = serializers.CharField(write_only=True, required=False)
-    followers_count = serializers.IntegerField(read_only=True)
-    following_count = serializers.IntegerField(read_only=True)
-
+    followers_count = serializers.SerializerMethodField()
+    following_count = serializers.SerializerMethodField()
+    is_following = serializers.SerializerMethodField()
+    
     class Meta:
         model = User
         fields = [
             'id', 'username', 'email', 'password',
             'first_name', 'last_name', 'bio',
             'profile_picture', 'followers_count',
-            'following_count', 'created_at'
+            'following_count', 'created_at',
+            'is_following'
         ]
         read_only_fields = ['id', 'created_at']
 
+    def get_followers_count(self, obj):
+        return obj.followers.count()
+
+    def get_following_count(self, obj):
+        return obj.following.count()
+
+    def get_is_following(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return request.user.following.filter(id=obj.id).exists()
+        return False
+
     def create(self, validated_data):
-        """Create user with create_user method"""
         return User.objects.create_user(**validated_data)
 
 class RegisterSerializer(serializers.ModelSerializer):
+    """Serializer for user registration"""
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
     password2 = serializers.CharField(write_only=True, style={'input_type': 'password'})
-    token = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'password2', 'token']
+        fields = ['username', 'email', 'password', 'password2']
         extra_kwargs = {
             'password': {'write_only': True},
             'password2': {'write_only': True},
@@ -43,7 +57,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        validated_data.pop('password2')  # Remove password2 before creating user
+        validated_data.pop('password2')
         
         with transaction.atomic():
             user = User.objects.create_user(
@@ -52,18 +66,13 @@ class RegisterSerializer(serializers.ModelSerializer):
                 password=validated_data['password']
             )
             # Create token for the user
-            token, created = Token.objects.get_or_create(user=user)
+            Token.objects.create(user=user)
         return user
 
-    def get_token(self, obj):
-        """Get token for the created user"""
-        token, created = Token.objects.get_or_create(user=obj)
-        return token.key
-
 class LoginSerializer(serializers.Serializer):
+    """Serializer for user login"""
     username = serializers.CharField()
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
-    token = serializers.CharField(read_only=True)
 
     def validate(self, data):
         username = data.get('username')
