@@ -41,11 +41,11 @@ INSTALLED_APPS = [
     # Third-party apps
     'rest_framework',
     'rest_framework.authtoken',  # For token authentication
-    'rest_framework_simplejwt',  # For JWT authentication (optional)
     'corsheaders',  # For handling CORS
     
     # Local apps
-    'accounts',  # User authentication and management
+    'accounts',
+    'posts',
 ]
 
 MIDDLEWARE = [
@@ -145,7 +145,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',  # Token auth
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT auth
         'rest_framework.authentication.SessionAuthentication',  # Session auth (for browsable API)
     ],
     'DEFAULT_PERMISSION_CLASSES': [
