@@ -10,7 +10,7 @@ router.register(r'posts', PostViewSet, basename='post')
 router.register(r'comments', CommentViewSet, basename='comment')
 
 urlpatterns = [
-    # FEED ENDPOINT - EXACTLY AS CHECKER WANTS
+    # Feed endpoint
     path('feed/', FeedView.as_view(), name='feed'),
     
     # Include router URLs

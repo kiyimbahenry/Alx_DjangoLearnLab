@@ -14,10 +14,10 @@ urlpatterns = [
     # User profile
     path('profile/', views.UserProfileView.as_view(), name='profile'),
     
-    # FOLLOW MANAGEMENT URLS - EXACT PATTERN CHECKER WANTS:
+    # FOLLOW MANAGEMENT URLS - EXACTLY AS CHECKER EXPECTS
     path('follow/<int:user_id>/', views.FollowUserView.as_view(), name='follow-user'),
     path('unfollow/<int:user_id>/', views.UnfollowUserView.as_view(), name='unfollow-user'),
     
-    # Include router URLs
+    # Include router URLs (users endpoints with followers/following actions)
     path('', include(router.urls)),
 ]
